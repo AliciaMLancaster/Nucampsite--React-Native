@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { Component } from 'react';
 import { Text, View } from 'react-native';
 import { Card } from 'react-native-elements';
+import { CAMPSITES } from '../shared/campsites';
 
 function RenderCampsite({ campsite }) {
   //destructor
@@ -18,8 +19,27 @@ function RenderCampsite({ campsite }) {
   return <View />; //if not a value campsite object; returns an empty view component
 }
 
-function CampsiteInfo(props) {
-  return <RenderCampsite campsite={props.campsite} />;
+class CampsiteInfo extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      campsites: CAMPSITES,
+    };
+  }
+
+  static navigationOptions = {
+    title: 'Campsite Information',
+  };
+
+  render() {
+    //navigation prop to get the id
+    const campsiteId = this.props.navigation.getParam('campsiteId');
+    //filter to pull the campsite out from the array we want
+    const campsite = this.state.campsites.filter(
+      (campsite) => campsite.id === campsiteId
+    )[0];
+    return <RenderCampsite campsite={campsite} />; //pass campsite object from above
+  }
 }
 
 export default CampsiteInfo;
