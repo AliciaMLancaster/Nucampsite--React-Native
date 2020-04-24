@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
+import Home from './HomeComponent';
 import Directory from './DirectoryComponent';
 import CampsiteInfo from './CampsiteInfoComponent';
 import { View, Platform } from 'react-native';
-import { createStackNavigator } from 'react-navigation'; //main will hold all navigators
+import { createStackNavigator, createDrawerNavigator } from 'react-navigation'; //main will hold all navigators
 
 const DirectoryNavigator = createStackNavigator(
   {
@@ -27,6 +28,35 @@ const DirectoryNavigator = createStackNavigator(
   }
 );
 
+const HomeNavigator = createStackNavigator(
+  {
+    Home: { screen: Home },
+  },
+  {
+    navigationOptions: {
+      headerStyle: {
+        backgroundColor: '#5637DD',
+      },
+      headerTintColor: '#fff',
+      headerTitleStyle: {
+        color: '#fff',
+      },
+    },
+  }
+);
+
+//similar to StackNavigator
+const MainNavigator = createDrawerNavigator(
+  {
+    //route them through the StackNavigator
+    Home: { screen: HomeNavigator },
+    Directory: { screen: DirectoryNavigator },
+  },
+  {
+    drawerBackgroundColor: '#CEC8FF',
+  }
+);
+
 class Main extends Component {
   render() {
     return (
@@ -38,7 +68,7 @@ class Main extends Component {
             Platform.OS === 'ios' ? 0 : Expo.Constants.statusBarHeight,
         }}
       >
-        <DirectoryNavigator />
+        <MainNavigator />
       </View>
     );
   }
