@@ -1,22 +1,59 @@
 import React, { Component } from 'react';
-import { Text, View } from 'react-native';
-import { Card } from 'react-native-elements';
+import { Text, View, ScrollView, FlatList } from 'react-native';
+import { Card, Icon } from 'react-native-elements';
 import { CAMPSITES } from '../shared/campsites';
+import { COMMENTS } from '../shared/comments';
 
-function RenderCampsite({ campsite }) {
-  //destructor
+function RenderCampsite(props) { 
+  
+  const {campsite} = props;
   if (campsite) {
-    //makes sure it's not null or undefined; if truthy will execute return
     return (
       <Card
-        featuredTitle={campsite.name}
-        image={require('./images/react-lake.jpg')}
-      >
-        <Text style={{ margin: 10 }}>{campsite.description}</Text>
-      </Card>
+                featuredTitle={campsite.name}
+                image={require('./images/react-lake.jpg')}>
+                <Text style={{margin: 10}}>
+                    {campsite.description}
+                </Text>
+                <Icon
+                    name={props.favorite ? 'heart' : 'heart-o'}
+                    type='font-awesome'
+                    color='#f50'
+                    raised
+                    reverse
+                    onPress={() => props.favorite ? 
+                        console.log('Already set as a favorite') : props.markFavorite()}
+                />
+            </Card>
     );
   }
   return <View />; //if not a value campsite object; returns an empty view component
+}
+
+function RenderComments({ comments }) {
+  //returns a few lines of text so it's easy to just use text elements
+  const renderCommentItem = ({ item }) => {
+    return (
+      <View style={{ margin: 10 }}>
+        <Text style={{ fontSize: 14 }}>{item.text} </Text>
+        <Text style={{ fontSize: 12 }}>{item.rating} </Text>
+        <Text style={{ fontSize: 12 }}>
+          {`-- ${item.author}, ${item.date}`}{' '}
+        </Text>
+      </View>
+    );
+  };
+
+  return (
+    //render comments inside a card element and flat list that expects an array
+    <Card title="Comments">
+      <FlatList
+        data={comments} //comments array
+        renderItem={renderCommentItem} //function name....found above
+        keyExtractor={(item) => item.id.toString()} //use unique key
+      />
+    </Card>
+  );
 }
 
 class CampsiteInfo extends Component {
@@ -24,7 +61,13 @@ class CampsiteInfo extends Component {
     super(props);
     this.state = {
       campsites: CAMPSITES,
+      comments: COMMENTS,
+      favorite: false,
     };
+  }
+
+  markFavorite() {
+    this.setState({ favorite: true });
   }
 
   static navigationOptions = {
@@ -38,7 +81,21 @@ class CampsiteInfo extends Component {
     const campsite = this.state.campsites.filter(
       (campsite) => campsite.id === campsiteId
     )[0];
-    return <RenderCampsite campsite={campsite} />; //pass campsite object from above
+    //renders comments for specifc campsite
+    const comments = this.state.comments.filter(
+      (comment) => comment.campsiteId === campsiteId
+    );
+    return (
+      //pass campsite object and the comment object filtered above
+      <ScrollView>
+        <RenderCampsite
+          campsite={campsite}
+          favorite={this.state.favorite}
+          markFavorite={() => this.markFavorite()}
+        />
+        <RenderComments comments={comments} />
+      </ScrollView>
+    );
   }
 }
 
