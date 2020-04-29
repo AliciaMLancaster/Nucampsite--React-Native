@@ -1,29 +1,39 @@
 import React, { Component } from 'react';
 import { Text, View, ScrollView, FlatList } from 'react-native';
 import { Card, Icon } from 'react-native-elements';
-import { CAMPSITES } from '../shared/campsites';
-import { COMMENTS } from '../shared/comments';
+import { connect } from 'react-redux';
+import { baseUrl } from '../shared/baseUrl';
 
-function RenderCampsite(props) {  //need to pass all props
-  
-  const {campsite} = props; //still need to have the destructured campsite object in this function
+const mapStateToProps = (state) => {
+  return {
+    campsites: state.campsites,
+    comments: state.comments,
+  };
+};
+
+function RenderCampsite(props) {
+  //need to pass all props
+
+  const { campsite } = props; //still need to have the destructured campsite object in this function
   if (campsite) {
     return (
       <Card
         featuredTitle={campsite.name}
-        image={require('./images/react-lake.jpg')}>
-          <Text style={{margin: 10}}>
-            {campsite.description}
-          </Text>
-          <Icon
-            name={props.favorite ? 'heart' : 'heart-o'}
-            type='font-awesome'
-            color='#f50'
-            raised
-            reverse
-            onPress={() => props.favorite ? 
-              console.log('Already set as a favorite') : props.markFavorite()} 
-          />
+        image={{ uri: baseUrl + campsite.image }} //use images from server
+      >
+        <Text style={{ margin: 10 }}>{campsite.description}</Text>
+        <Icon
+          name={props.favorite ? 'heart' : 'heart-o'}
+          type="font-awesome"
+          color="#f50"
+          raised
+          reverse
+          onPress={() =>
+            props.favorite
+              ? console.log('Already set as a favorite')
+              : props.markFavorite()
+          }
+        />
       </Card>
     );
   }
@@ -60,8 +70,6 @@ class CampsiteInfo extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      campsites: CAMPSITES,
-      comments: COMMENTS,
       favorite: false,
     };
   }
@@ -78,11 +86,11 @@ class CampsiteInfo extends Component {
     //navigation prop to get the id
     const campsiteId = this.props.navigation.getParam('campsiteId');
     //filter to pull the campsite out from the array we want
-    const campsite = this.state.campsites.filter(
+    const campsite = this.props.campsites.campsites.filter(
       (campsite) => campsite.id === campsiteId
     )[0];
     //renders comments for specifc campsite
-    const comments = this.state.comments.filter(
+    const comments = this.props.comments.comments.filter(
       (comment) => comment.campsiteId === campsiteId
     );
     return (
@@ -99,4 +107,4 @@ class CampsiteInfo extends Component {
   }
 }
 
-export default CampsiteInfo;
+export default connect(mapStateToProps)(CampsiteInfo);

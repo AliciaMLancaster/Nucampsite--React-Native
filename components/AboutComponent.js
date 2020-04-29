@@ -1,7 +1,14 @@
 import React, { Component } from 'react';
 import { Text, ScrollView, FlatList } from 'react-native';
 import { Card, ListItem } from 'react-native-elements';
-import { PARTNERS } from '../shared/partners';
+import { connect } from 'react-redux';
+import { baseUrl } from '../shared/baseUrl';
+
+const mapStateToProps = (state) => {
+  return {
+    partners: state.partners,
+  };
+};
 
 function Mission() {
   return (
@@ -20,13 +27,6 @@ function Mission() {
 }
 
 class About extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      partners: PARTNERS,
-    };
-  }
-
   static navigationOptions = {
     title: 'About Us',
   };
@@ -37,7 +37,7 @@ class About extends Component {
         <ListItem
           title={item.name} //partner names
           subtitle={item.description} //partner description
-          leftAvatar={{ source: require('./images/bootstrap-logo.png') }} //partner image
+          leftAvatar={{ source: { uri: baseUrl + item.image } }} //partner image
           //render groups or lists or items...loads all of child components at once vs flat list which does one part of a list is rendered at a time
         />
       );
@@ -48,7 +48,7 @@ class About extends Component {
         <Mission />
         <Card title="Community Partners">
           <FlatList
-            data={this.state.partners} //pass from current state partners array
+            data={this.props.partners.partners} //pass from current state partners array
             renderItem={renderPartner} //call back function
             keyExtractor={(item) => item.id.toString()}
           />
@@ -58,4 +58,4 @@ class About extends Component {
   }
 }
 
-export default About;
+export default connect(mapStateToProps)(About);
