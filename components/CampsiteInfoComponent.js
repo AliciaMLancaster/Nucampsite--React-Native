@@ -4,27 +4,27 @@ import { Card, Icon } from 'react-native-elements';
 import { CAMPSITES } from '../shared/campsites';
 import { COMMENTS } from '../shared/comments';
 
-function RenderCampsite(props) { 
+function RenderCampsite(props) {  //need to pass all props
   
-  const {campsite} = props;
+  const {campsite} = props; //still need to have the destructured campsite object in this function
   if (campsite) {
     return (
       <Card
-                featuredTitle={campsite.name}
-                image={require('./images/react-lake.jpg')}>
-                <Text style={{margin: 10}}>
-                    {campsite.description}
-                </Text>
-                <Icon
-                    name={props.favorite ? 'heart' : 'heart-o'}
-                    type='font-awesome'
-                    color='#f50'
-                    raised
-                    reverse
-                    onPress={() => props.favorite ? 
-                        console.log('Already set as a favorite') : props.markFavorite()}
-                />
-            </Card>
+        featuredTitle={campsite.name}
+        image={require('./images/react-lake.jpg')}>
+          <Text style={{margin: 10}}>
+            {campsite.description}
+          </Text>
+          <Icon
+            name={props.favorite ? 'heart' : 'heart-o'}
+            type='font-awesome'
+            color='#f50'
+            raised
+            reverse
+            onPress={() => props.favorite ? 
+              console.log('Already set as a favorite') : props.markFavorite()} 
+          />
+      </Card>
     );
   }
   return <View />; //if not a value campsite object; returns an empty view component
