@@ -168,18 +168,19 @@ export const addFavorite = (campsiteId) => ({
 
 export const postComment = (campsiteId, rating, author, text) => (dispatch) => {
   const newComment = {
+    //assign new const value with an object with the properties as below
     campsiteId,
     rating,
     author,
     text,
   };
-  newComment.date = new Date().toISOString();
-
+  newComment.date = new Date().toISOString(); //assign another property to newComment called date using JS date method and set to ISO string
+  //set a timeout function method to simulate a server response that waits 2 seconds; passing newComment as argument
   setTimeout(() => {
     dispatch(addComment(newComment));
   }, 2000);
 };
-
+//action creator for adding a comment which pass the comment parameter and sets the type and payload accordingly
 export const addComment = (comment) => ({
   type: ActionTypes.ADD_COMMENT,
   payload: comment,

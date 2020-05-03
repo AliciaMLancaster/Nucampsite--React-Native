@@ -23,8 +23,12 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = {
   postFavorite: (campsiteId) => postFavorite(campsiteId),
-  postComment: (campsiteId, rating, author, text) =>
-    postComment(campsiteId, rating, author, text),
+  postComment: (
+    campsiteId,
+    rating,
+    author,
+    text //Dispatch the new postComment action creator
+  ) => postComment(campsiteId, rating, author, text),
 };
 
 function RenderCampsite(props) {
@@ -115,6 +119,7 @@ class CampsiteInfo extends Component {
   }
 
   handleComment(campsiteId) {
+    //pass the campsiteId argument along with the 3 form values from state
     this.props.postComment(
       campsiteId,
       this.state.rating,
