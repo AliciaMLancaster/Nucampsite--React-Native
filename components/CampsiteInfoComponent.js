@@ -7,6 +7,8 @@ import {
   Modal,
   Button,
   StyleSheet,
+  Alert,
+  PanResponder,
 } from 'react-native';
 import { Card, Icon, Rating, Input } from 'react-native-elements';
 import { connect } from 'react-redux';
@@ -36,9 +38,46 @@ function RenderCampsite(props) {
   //need to pass all props
 
   const { campsite } = props; //still need to have the destructured campsite object in this function
+
+  const recognizeDrag = ({ dx }) => (dx < -200 ? true : false); //dx= distance across x access
+
+  const panResponder = PanResponder.create({
+    onStartShouldSetPanResponder: () => true,
+    onPanResponderEnd: (e, gestureState) => {
+      console.log('pan responder end', gestureState);
+      if (recognizeDrag(gestureState)) {
+        Alert.alert(
+          'Add Favorite',
+          'Are you sure you wish to add ' + campsite.name + ' to favorites?',
+          [
+            {
+              text: 'Cancel',
+              style: 'cancel',
+              onPress: () => console.log('Cancel Pressed'),
+            },
+            {
+              text: 'OK',
+              onPress: () =>
+                props.favorite
+                  ? console.log('Already set as a favorite')
+                  : props.markFavorite(),
+            },
+          ],
+          { cancelable: false }
+        );
+      }
+      return true;
+    },
+  });
+
   if (campsite) {
     return (
-      <Animatable.View animation="fadeInDown" duration={2000} delay={1000}>
+      <Animatable.View
+        animation="fadeInDown"
+        duration={2000}
+        delay={1000}
+        {...panResponder.panHandlers}
+      >
         <Card
           featuredTitle={campsite.name}
           image={{ uri: baseUrl + campsite.image }} //use images from server
